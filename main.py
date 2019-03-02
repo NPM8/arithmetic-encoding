@@ -37,12 +37,12 @@ def genArray(alphabet="0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOPQRSTW
 
 
 def encode(alphabet: str = "0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOPQRSTWVUXYZ,. \t\n",
-           file: str = "file.txt", output: str = "out_file.txt"):
+           file: str = "file.txt", output: str = "out_file.txt") -> None:
     array_of_compartments = genArray(alphabet, file)
     if os.path.exists(output):
         os.remove(output)
     with open(file, "r") as input_file:
-        for line in input_file.readline():
+        for line in input_file.readlines():
             tmp_str = ''
             print(line)
             for elem in line.split():
@@ -61,6 +61,21 @@ def encode(alphabet: str = "0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOP
                 number = (tmp_array[0].range[0] + tmp_array[-1].range[1]) / 2
                 with open(output, "a+") as output_file:
                     output_file.write(f'{number} {len(elem)}#')
+            with open(output, "a+") as output_file:
+                output_file.write("\n")
+
+
+def decode(array_of_compartment,
+           file: str = "file.txt", output: str = "out_file.txt") -> None:
+    with open(file, "r") as input_file:
+        for line in input_file.readlines():
+            for numbers in line.split("#"):
+                point, number = numbers.split()[0], numbers.split()[1]
+                tmp_array = array_of_compartment
+                for i in range(1, number):
+                    tmp_array
+
+    return None
 
 
 encode()
