@@ -1,8 +1,9 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import math
 import os
 import copy
-import sys
-from typing import List, Tuple
+from typing import List
 
 from DataStruct import Compartment
 
@@ -25,6 +26,7 @@ def alfarray(alphabet="0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOPQRSTW
 
 
 def genArrayOfCompartments(alphabet="0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOPQRSTWVUXYZ,. \t\n", file="file.txt"):
+    # Array of ranges
     tmp_array_of_compartments: List[Compartment] = []
     for i, val in enumerate(alfarray(alphabet, file)):
         tmp_elem = 0.0 if i == 0 else tmp_array_of_compartments[i - 1].range[1]
@@ -37,9 +39,13 @@ def genArrayOfCompartments(alphabet="0123456789abcdefghijklmnopqrstwvuxyzABCDEFG
 
 def encode(alphabet: str = "0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOPQRSTWVUXYZ,. \t\n",
            file: str = "file.txt", output: str = "out_file.txt") -> None:
+    # function writing outfile with strings  encoding in style "{float} {length}#" where # - word break
     array_of_compartments = genArrayOfCompartments(alphabet, file)
+    print(array_of_compartments)
     if os.path.exists(output):
         os.remove(output)
+    with open(output, "a+") as f:
+        f.write(str(array_of_compartments) + "\n")
     with open(file, "r") as input_file:
         for line in input_file.readlines():
             tmp_str = ''
@@ -51,26 +57,32 @@ def encode(alphabet: str = "0123456789abcdefghijklmnopqrstwvuxyzABCDEFGHIJKLMNOP
                     first = compartment.range[0]
                     last = compartment.range[1]
                     size = last - first
-                    # print('Litera {} zakres: {}, {} wielkość: {}'.format(compartment.letter, compartment.range[0],
-                    #                                                      compartment.range[1], size))
+                    print('Litera {} zakres: {}, {} wielkość: {}'.format(compartment.letter, compartment.range[0],
+                                                                         compartment.range[1], size))
                     for itr, val in enumerate(array_of_compartments):
                         value1: float = first + (size * val.range[0])
                         value2: float = first + (size * val.range[1])
+                        tmp_array[itr].set_range((value1, value2))
                         # print('Value: {}, {} array val: {}, {}'.format(value1, value2, val.range[0], val.range[1]))
-                        # tmp_array[itr].set_range((value1, value2))
                 print(tmp_array[0], tmp_array[-1])
                 number = math.fsum([tmp_array[0].range[0], tmp_array[-1].range[1]]) / 2
+                print(number)
                 with open(output, "a+") as output_file:
                     output_file.write(f'{number} {len(elem)}#')
             with open(output, "a+") as output_file:
                 output_file.write("\n")
 
 
-def decode(array_of_compartment,
-           file: str = "out_file.txt", output: str = "decodet_out_file.txt") -> None:
+def decode(file: str = "out_file.txt", output: str = "decodet_out_file.txt") -> None:
+    # decoding
+    array_of_compartment: List[Compartment]
     if os.path.exists(output): os.remove(output)
     with open(file, "r") as input_file:
-        for line in input_file.readlines():
+        for index, line in enumerate(input_file.readlines()):
+            print("{} {}".format(index, line))
+            if index == 0:
+                array_of_compartment = eval(line[:-1])
+                continue
             for numbers in line.split("#"):
                 if numbers == '\n':
                     continue
@@ -97,4 +109,4 @@ def decode(array_of_compartment,
 
 encode()
 
-decode(genArrayOfCompartments())
+decode()
